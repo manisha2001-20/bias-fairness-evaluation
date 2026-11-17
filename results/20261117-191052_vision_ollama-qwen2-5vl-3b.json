@@ -1,0 +1,88 @@
+{
+  "timestamp": "2026-11-17T19:10:52",
+  "evaluation": "vision",
+  "dataset": "FairFace validation (race, 10/group, gender-balanced)",
+  "model": {
+    "key": "ollama:qwen2.5vl:3b",
+    "name": "qwen2.5vl:3b",
+    "family": "Qwen2.5-VL",
+    "backend": "ollama",
+    "simulated": false
+  },
+  "summary": {
+    "evaluation": "vision",
+    "n_items": 70,
+    "error_rate": 0.0,
+    "groups": {
+      "Black": {
+        "n": 10,
+        "accuracy": 0.5,
+        "ci95": [
+          0.2,
+          0.8
+        ],
+        "unparsed_rate": 0.0
+      },
+      "East Asian": {
+        "n": 10,
+        "accuracy": 0.9,
+        "ci95": [
+          0.7,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      },
+      "Indian": {
+        "n": 10,
+        "accuracy": 0.9,
+        "ci95": [
+          0.7,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      },
+      "Latino_Hispanic": {
+        "n": 10,
+        "accuracy": 1.0,
+        "ci95": [
+          1.0,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      },
+      "Middle Eastern": {
+        "n": 10,
+        "accuracy": 0.9,
+        "ci95": [
+          0.7,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      },
+      "Southeast Asian": {
+        "n": 10,
+        "accuracy": 0.9,
+        "ci95": [
+          0.7,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      },
+      "White": {
+        "n": 10,
+        "accuracy": 0.9,
+        "ci95": [
+          0.7,
+          1.0
+        ],
+        "unparsed_rate": 0.0
+      }
+    },
+    "accuracy_by_true_gender": {
+      "female": 0.8285714285714286,
+      "male": 0.8857142857142857
+    },
+    "accuracy_gap": 0.5,
+    "bias_score": 50.0
+  }
+}

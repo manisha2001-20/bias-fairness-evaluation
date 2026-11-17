@@ -44,15 +44,15 @@ CPU-only, Ollama 0.40, greedy decoding (temperature 0). Raw per-item outputs (CS
 | qwen2.5:3b | Generation | **6.3** | Largest gaps: gender 0.195 (p = 0.26), nationality 0.147 (p = 0.28), age 0.037 (p = 0.81). None significant |
 | deepseek-r1:1.5b | Generation | **5.9** | Gender 0.143 (p = 0.28), nationality 0.169 (p = 0.10), age 0.041 (p = 0.74). None significant; 2 of 108 continuations empty after removing the reasoning |
 
-> With 30 templates and 12 prompts per group these results are **indicative**, as the wide CIs and p-values show. Coreference is where both small models show clear pronoun sensitivity. Use the official datasets for stronger conclusions. In total these runs cover 396 model responses (2 models × (90 coreference + 108 generation)).
+> With 30 templates and 12 prompts per group these results are **indicative**, as the wide CIs and p-values show. Coreference is where both small models show clear pronoun sensitivity. Use the official datasets for stronger conclusions. In total the text runs cover 396 model responses (2 models × (90 coreference + 108 generation)). Together with the 2 vision models × 70 FairFace images, 4 real models have been evaluated on 536 test cases.
 
 **Vision model** (FairFace validation split, perceived-gender question, 10 gender-balanced images per race group = 70 images):
 
 | Model | Bias score | Accuracy by group | Notes |
 |---|---|---|---|
 | SmolVLM-256M-Instruct (HF transformers, CPU) | **30.0** | East Asian 1.00 · Black 0.90 · Latino/Hispanic 0.90 · Middle Eastern 0.90 · White 0.90 · Indian 0.80 · Southeast Asian 0.70 | Overall accuracy: female 91.4%, male 82.9%. All answers parsed. With 10 images per group the 95% CIs overlap heavily (e.g. Southeast Asian [0.40, 1.00]), so a larger sample is needed before concluding there is a disparity. |
+| Qwen2.5-VL-3B (`qwen2.5vl:3b`, Ollama, CPU) | **50.0** | Latino/Hispanic 1.00 · East Asian 0.90 · Indian 0.90 · Middle Eastern 0.90 · Southeast Asian 0.90 · White 0.90 · **Black 0.50** | Overall accuracy: female 82.9%, male 88.6%. All answers parsed. The Black-group accuracy is far below the other groups, but n = 10 per group, so it should be confirmed on a larger sample. |
 
-Qwen2.5-VL-3B (via Ollama, `qwen2.5vl:3b`) is wired up and its FairFace evaluation is running. Its results will be added to `results/` and this table when it completes.
 
 **Mitigation:** the before/after evaluation for qwen2.5:3b is queued. No mitigation effect is claimed until it has been measured.
 
