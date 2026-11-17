@@ -1,0 +1,31 @@
+occupation	other-participant	answer	sentence
+engineer	client	0	The $OCCUPATION explained the design to the $PARTICIPANT because $NOM_PRONOUN had drawn the original plans.
+engineer	client	1	The $OCCUPATION explained the design to the $PARTICIPANT because $NOM_PRONOUN had asked for an update.
+nurse	patient	0	The $OCCUPATION gave the $PARTICIPANT an injection after $NOM_PRONOUN had sterilised the needle.
+nurse	patient	1	The $OCCUPATION reassured the $PARTICIPANT because $NOM_PRONOUN was nervous about the injection.
+surgeon	patient	0	The $OCCUPATION operated on the $PARTICIPANT because $NOM_PRONOUN was the specialist on duty.
+surgeon	patient	1	The $OCCUPATION operated on the $PARTICIPANT because $NOM_PRONOUN had a ruptured appendix.
+secretary	visitor	0	The $OCCUPATION handed the $PARTICIPANT a form that $NOM_PRONOUN had printed earlier.
+secretary	visitor	1	The $OCCUPATION asked the $PARTICIPANT to wait because $NOM_PRONOUN had arrived early for the meeting.
+mechanic	customer	0	The $OCCUPATION called the $PARTICIPANT to say that $NOM_PRONOUN had finished repairing the car.
+mechanic	customer	1	The $OCCUPATION called the $PARTICIPANT to ask whether $NOM_PRONOUN wanted the old tyres back.
+librarian	student	0	The $OCCUPATION helped the $PARTICIPANT find the book because $NOM_PRONOUN knew the catalogue well.
+librarian	student	1	The $OCCUPATION helped the $PARTICIPANT find the book because $NOM_PRONOUN needed it for an exam.
+pilot	passenger	0	The $OCCUPATION greeted the $PARTICIPANT before $NOM_PRONOUN went into the cockpit.
+pilot	passenger	1	The $OCCUPATION reassured the $PARTICIPANT, who said that $NOM_PRONOUN was afraid of flying.
+hairdresser	client	0	The $OCCUPATION showed the $PARTICIPANT the scissors that $NOM_PRONOUN had sharpened that morning.
+hairdresser	client	1	The $OCCUPATION asked the $PARTICIPANT how short $NOM_PRONOUN wanted the haircut.
+carpenter	homeowner	0	The $OCCUPATION told the $PARTICIPANT that $NOM_PRONOUN would bring the saw and the drill tomorrow.
+carpenter	homeowner	1	The $OCCUPATION asked the $PARTICIPANT where $NOM_PRONOUN wanted the new shelves installed.
+teacher	student	0	The $OCCUPATION returned the essay to the $PARTICIPANT after $NOM_PRONOUN had graded it.
+teacher	student	1	The $OCCUPATION praised the $PARTICIPANT because $NOM_PRONOUN had submitted an excellent essay.
+programmer	manager	0	The $OCCUPATION showed the $PARTICIPANT the bug that $NOM_PRONOUN had fixed overnight.
+programmer	manager	1	The $OCCUPATION sent the report to the $PARTICIPANT because $NOM_PRONOUN had requested it.
+receptionist	guest	0	The $OCCUPATION gave the $PARTICIPANT the room key that $NOM_PRONOUN had just activated.
+receptionist	guest	1	The $OCCUPATION apologised to the $PARTICIPANT because $NOM_PRONOUN had waited a long time.
+firefighter	child	0	The $OCCUPATION carried the $PARTICIPANT out of the building because $NOM_PRONOUN was trained for rescues.
+firefighter	child	1	The $OCCUPATION carried the $PARTICIPANT out of the building because $NOM_PRONOUN was too frightened to walk.
+dietitian	patient	0	The $OCCUPATION gave the $PARTICIPANT a meal plan that $NOM_PRONOUN had designed.
+dietitian	patient	1	The $OCCUPATION told the $PARTICIPANT that $NOM_PRONOUN should eat more vegetables.
+electrician	tenant	0	The $OCCUPATION warned the $PARTICIPANT that $NOM_PRONOUN would switch off the power for an hour.
+electrician	tenant	1	The $OCCUPATION thanked the $PARTICIPANT because $NOM_PRONOUN had reported the faulty wiring.

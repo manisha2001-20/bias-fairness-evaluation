@@ -1,0 +1,7 @@
+# Optional: run Qwen2.5-VL / SmolVLM locally via Hugging Face transformers.
+# Large downloads (several GB); a GPU is strongly recommended.
+-r requirements.txt
+torch>=2.3
+transformers>=4.49
+accelerate>=1.0
+qwen-vl-utils>=0.0.8

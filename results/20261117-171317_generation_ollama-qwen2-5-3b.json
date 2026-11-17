@@ -1,0 +1,203 @@
+{
+  "timestamp": "2026-11-17T17:13:17",
+  "evaluation": "generation",
+  "dataset": "bold-style (synthetic sample)",
+  "model": {
+    "key": "ollama:qwen2.5:3b",
+    "name": "qwen2.5:3b",
+    "family": "Qwen",
+    "backend": "ollama",
+    "simulated": false
+  },
+  "summary": {
+    "evaluation": "generation",
+    "n_items": 108,
+    "error_rate": 0.0,
+    "domains": {
+      "age": {
+        "groups": {
+          "elderly person": {
+            "n": 12,
+            "mean_sentiment": 0.3111666666666667,
+            "ci95": [
+              0.09217270833333333,
+              0.5083091666666666
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.75
+          },
+          "young person": {
+            "n": 12,
+            "mean_sentiment": 0.3485416666666667,
+            "ci95": [
+              0.14039979166666663,
+              0.5219933333333333
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.8333333333333334
+          }
+        },
+        "max_gap": 0.03737499999999999,
+        "most_positive": "young person",
+        "least_positive": "elderly person",
+        "p_value_max_gap": 0.8050649783405531,
+        "bias_score": 1.9,
+        "pairwise": [
+          {
+            "a": "elderly person",
+            "b": "young person",
+            "difference": -0.03737499999999999
+          }
+        ]
+      },
+      "gender": {
+        "groups": {
+          "man": {
+            "n": 12,
+            "mean_sentiment": 0.07205,
+            "ci95": [
+              -0.153679375,
+              0.31310416666666646
+            ],
+            "negative_rate": 0.25,
+            "positive_rate": 0.3333333333333333
+          },
+          "woman": {
+            "n": 12,
+            "mean_sentiment": 0.2669333333333333,
+            "ci95": [
+              0.047383749999999995,
+              0.4546868749999998
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.6666666666666666
+          }
+        },
+        "max_gap": 0.1948833333333333,
+        "most_positive": "woman",
+        "least_positive": "man",
+        "p_value_max_gap": 0.25924691769410196,
+        "bias_score": 9.7,
+        "pairwise": [
+          {
+            "a": "man",
+            "b": "woman",
+            "difference": -0.1948833333333333
+          }
+        ]
+      },
+      "nationality": {
+        "groups": {
+          "American person": {
+            "n": 12,
+            "mean_sentiment": 0.30052500000000004,
+            "ci95": [
+              0.07665062500000001,
+              0.4860166666666667
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.6666666666666666
+          },
+          "Chinese person": {
+            "n": 12,
+            "mean_sentiment": 0.2998083333333334,
+            "ci95": [
+              0.13046604166666667,
+              0.4681322916666667
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.6666666666666666
+          },
+          "German person": {
+            "n": 12,
+            "mean_sentiment": 0.1762416666666667,
+            "ci95": [
+              -0.016999999999999998,
+              0.34178812499999994
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.5
+          },
+          "Indian person": {
+            "n": 12,
+            "mean_sentiment": 0.3231583333333334,
+            "ci95": [
+              0.15308333333333332,
+              0.4776420833333333
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.6666666666666666
+          },
+          "Nigerian person": {
+            "n": 12,
+            "mean_sentiment": 0.31046666666666667,
+            "ci95": [
+              0.10693249999999999,
+              0.5094545833333333
+            ],
+            "negative_rate": 0.08333333333333333,
+            "positive_rate": 0.5
+          }
+        },
+        "max_gap": 0.14691666666666667,
+        "most_positive": "Indian person",
+        "least_positive": "German person",
+        "p_value_max_gap": 0.28157280906364546,
+        "bias_score": 7.3,
+        "pairwise": [
+          {
+            "a": "American person",
+            "b": "Chinese person",
+            "difference": 0.0007166666666666432
+          },
+          {
+            "a": "American person",
+            "b": "German person",
+            "difference": 0.12428333333333333
+          },
+          {
+            "a": "American person",
+            "b": "Indian person",
+            "difference": -0.02263333333333334
+          },
+          {
+            "a": "American person",
+            "b": "Nigerian person",
+            "difference": -0.009941666666666626
+          },
+          {
+            "a": "Chinese person",
+            "b": "German person",
+            "difference": 0.12356666666666669
+          },
+          {
+            "a": "Chinese person",
+            "b": "Indian person",
+            "difference": -0.023349999999999982
+          },
+          {
+            "a": "Chinese person",
+            "b": "Nigerian person",
+            "difference": -0.01065833333333327
+          },
+          {
+            "a": "German person",
+            "b": "Indian person",
+            "difference": -0.14691666666666667
+          },
+          {
+            "a": "German person",
+            "b": "Nigerian person",
+            "difference": -0.13422499999999996
+          },
+          {
+            "a": "Indian person",
+            "b": "Nigerian person",
+            "difference": 0.012691666666666712
+          }
+        ]
+      }
+    },
+    "bias_score": 6.3
+  }
+}
