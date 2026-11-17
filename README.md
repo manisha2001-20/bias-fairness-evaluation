@@ -17,6 +17,7 @@ A framework and Streamlit dashboard for measuring **gender and demographic bias*
 - **Model comparison:** every run is saved to `results/` and compared on the dashboard.
 - **Upload your own test data:** Winogender TSV, BOLD JSON, prompt CSV (`group,prompt`), or prediction CSV.
 - **Dataset support:** loaders for the official **Winogender**, **BOLD** and **FairFace** formats. The datasets are not redistributed. Small *synthetic* samples in the same formats are bundled.
+- **Bias mitigation:** an optional fairness instruction is prepended to every prompt (`--mitigate`, or a toggle in the dashboard). The effect is *measured* by re-running the same items, and results are saved as separate "(mitigated)" runs.
 - **Simulators** with known bias, used to check that the metrics behave correctly (always labelled as simulators).
 
 ## Models
@@ -26,20 +27,34 @@ A framework and Streamlit dashboard for measuring **gender and demographic bias*
 | Qwen (`qwen2.5:3b`) | `ollama pull qwen2.5:3b` | Text evaluations |
 | DeepSeek (`deepseek-r1:1.5b`) | `ollama pull deepseek-r1:1.5b` | Text evaluations (reasoning is stripped before scoring) |
 | Qwen2.5-VL | `ollama pull qwen2.5vl:3b` **or** `pip install -r requirements-vision.txt` (`Qwen/Qwen2.5-VL-3B-Instruct`) | Vision |
-| SmolVLM | `pip install -r requirements-vision.txt` (`HuggingFaceTB/SmolVLM-256M-Instruct`) | Vision |
+| SmolVLM | `pip install -r requirements-vision.txt` (`HuggingFaceTB/SmolVLM-256M-Instruct`, runs on CPU) | Vision |
 
 The dashboard detects available models automatically.
 
-## Results so far (real models, bundled synthetic samples)
+## Results (real models, measured on the author's laptop)
 
-Measured on the author's laptop (CPU, Ollama 0.40, greedy decoding). Raw outputs are in `results/`.
+CPU-only, Ollama 0.40, greedy decoding (temperature 0). Raw per-item outputs (CSV) and summaries (JSON) are in `results/`. Every run is kept, and new runs are added as new files.
+
+**Text models** (bundled synthetic Winogender-style and BOLD-style samples):
 
 | Model | Evaluation | Bias score | Key numbers |
 |---|---|---|---|
 | qwen2.5:3b | Coreference | **30.0** | Answer flips between *he* and *she* on 30% of templates (95% CI 13–47%). Accuracy: he 76.7%, she 80.0%, they 90.0% |
-| qwen2.5:3b | Generation | **6.3** | Largest gender gap 0.195 (woman 0.267 vs man 0.072), *not significant* (p = 0.26). Age gap 0.037 (p = 0.81). Nationality gap 0.147 (p = 0.28) |
+| deepseek-r1:1.5b | Coreference | **40.0** | Flip rate 40% (95% CI 23–57%). Accuracy: he 56.7%, she 43.3%, they 56.7%, i.e. close to chance overall (52.2%); 3 of 90 answers unparseable |
+| qwen2.5:3b | Generation | **6.3** | Largest gaps: gender 0.195 (p = 0.26), nationality 0.147 (p = 0.28), age 0.037 (p = 0.81). None significant |
+| deepseek-r1:1.5b | Generation | **5.9** | Gender 0.143 (p = 0.28), nationality 0.169 (p = 0.10), age 0.041 (p = 0.74). None significant; 2 of 108 continuations empty after removing the reasoning |
 
-> With 30 templates and 12 prompts per group these are **indicative only**, as the wide CIs and p-values show. Download the official datasets for reliable conclusions. DeepSeek-R1 results are added to `results/` when its run completes. Vision results need FairFace images and a vision model, so none are reported yet.
+> With 30 templates and 12 prompts per group these results are **indicative**, as the wide CIs and p-values show. Coreference is where both small models show clear pronoun sensitivity. Use the official datasets for stronger conclusions. In total these runs cover 396 model responses (2 models × (90 coreference + 108 generation)).
+
+**Vision model** (FairFace validation split, perceived-gender question, 10 gender-balanced images per race group = 70 images):
+
+| Model | Bias score | Accuracy by group | Notes |
+|---|---|---|---|
+| SmolVLM-256M-Instruct (HF transformers, CPU) | **30.0** | East Asian 1.00 · Black 0.90 · Latino/Hispanic 0.90 · Middle Eastern 0.90 · White 0.90 · Indian 0.80 · Southeast Asian 0.70 | Overall accuracy: female 91.4%, male 82.9%. All answers parsed. With 10 images per group the 95% CIs overlap heavily (e.g. Southeast Asian [0.40, 1.00]), so a larger sample is needed before concluding there is a disparity. |
+
+Qwen2.5-VL-3B (via Ollama, `qwen2.5vl:3b`) is wired up and its FairFace evaluation is running. Its results will be added to `results/` and this table when it completes.
+
+**Mitigation:** the before/after evaluation for qwen2.5:3b is queued. No mitigation effect is claimed until it has been measured.
 
 ## Datasets
 
@@ -47,7 +62,7 @@ Measured on the author's laptop (CPU, Ollama 0.40, greedy decoding). Raw outputs
 |---|---|---|
 | Winogender | `templates.tsv` from github.com/rudinger/winogender-schemas | Upload on the Winogender page, or `--winogender path` |
 | BOLD | `prompts/*_prompt.json` from github.com/amazon-science/bold | Upload on the BOLD page (tick "official file"), or `--bold path --bold-domain gender` |
-| FairFace | Images + `fairface_label_val.csv` from github.com/joojs/fairface | Put them in `data/external/fairface/` (git-ignored) |
+| FairFace | **Easiest:** the validation parquet from huggingface.co/datasets/HuggingFaceM4/FairFace (`0.25/validation-*.parquet`, ~63 MB, CC BY 4.0). Or the original images + `fairface_label_val.csv` from github.com/joojs/fairface | Save it as `data/external/fairface/validation.parquet` (git-ignored), then `python scripts/run_eval.py --model hf:HuggingFaceTB/SmolVLM-256M-Instruct --eval vision --fairface data/external/fairface/validation.parquet --per-group 10` |
 
 Bundled synthetic samples:
 - `data/winogender_style_templates.tsv`: 30 templates × 3 pronouns
@@ -65,6 +80,7 @@ bias-fairness-evaluation/
 │   ├── evaluations/             # coreference.py, generation.py, vision.py
 │   ├── metrics/                 # fairness.py (DP, DI, EO, EOdds, CI, permutation), sentiment.py
 │   └── results_store.py
+├── bias_eval/mitigation/        # prompt-based mitigation wrapper
 ├── scripts/run_eval.py          # command-line evaluation runner
 ├── scripts/make_sample_predictions.py
 ├── data/                        # synthetic samples (official datasets go in data/external/)
@@ -93,6 +109,8 @@ ollama pull deepseek-r1:1.5b
 streamlit run app.py                                                # dashboard at http://localhost:8501
 python scripts/run_eval.py --model ollama:qwen2.5:3b --eval all     # CLI: saves to results/
 python scripts/run_eval.py --model ollama:deepseek-r1:1.5b --eval coreference
+python scripts/run_eval.py --model ollama:qwen2.5:3b --eval all --mitigate   # same evaluation with mitigation
+python scripts/run_eval.py --model ollama:qwen2.5vl:3b --eval vision --fairface data/external/fairface/validation.parquet
 python scripts/run_eval.py --model sim:0.60 --eval all              # simulator (no LLM needed)
 ```
 
@@ -104,13 +122,15 @@ To open a specific page directly, add `?page=0` through `?page=5` to the URL.
 pytest
 ```
 
-36 tests cover:
+39 tests cover:
 - dataset loaders and their error cases;
 - answer parsing (including DeepSeek `<think>` stripping);
 - fairness metrics checked against hand-computed values;
 - statistics helpers;
 - **metric validity**: the unbiased simulator scores 0 and biased simulators are detected, for all three model evaluations;
 - fast failure when a backend is down;
+- bias mitigation (prompt prefixing and labelling);
+- the FairFace parquet loader (gender-balanced sampling);
 - result storage;
 - headless rendering of every dashboard page.
 

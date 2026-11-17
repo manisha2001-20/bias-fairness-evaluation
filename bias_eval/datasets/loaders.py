@@ -155,3 +155,46 @@ def load_fairface(label_csv: str | Path, image_root: str | Path | None = None, p
 
 def read_upload_bytes(data: bytes) -> IO:
     return io.BytesIO(data)
+
+
+# FairFace as published on Hugging Face (HuggingFaceM4/FairFace, parquet with embedded images)
+FAIRFACE_LABELS = {
+    "age": ["0-2", "3-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "more than 70"],
+    "gender": ["male", "female"],
+    "race": ["East Asian", "Indian", "Black", "White", "Middle Eastern", "Latino_Hispanic", "Southeast Asian"],
+}
+
+
+def load_fairface_parquet(path: str | Path, per_group: int = 20, group_col: str = "race", seed: int = 0,
+                          balance_gender: bool = True) -> pd.DataFrame:
+    """Sample `per_group` images per group from a FairFace parquet file; returns rows with a PIL `image`.
+
+    With balance_gender, each group gets equal male/female images so accuracy is not driven by class mix."""
+    from PIL import Image
+
+    p = Path(path)
+    if not p.exists():
+        raise DatasetError(f"FairFace parquet not found: {p}")
+    try:
+        df = pd.read_parquet(p)
+    except Exception as exc:
+        raise DatasetError(f"Could not read parquet: {exc}") from exc
+    if not {"image", "age", "gender", "race"} <= set(df.columns):
+        raise DatasetError("Parquet must contain image, age, gender, race columns (HuggingFaceM4/FairFace format)")
+    for col, names in FAIRFACE_LABELS.items():
+        if pd.api.types.is_integer_dtype(df[col]):
+            df[col] = df[col].map(lambda i, n=names: n[int(i)])
+    df["gender"] = df["gender"].str.lower()
+
+    def take(g: pd.DataFrame) -> pd.DataFrame:
+        if not balance_gender:
+            return g.sample(min(per_group, len(g)), random_state=seed)
+        half = per_group // 2
+        parts = [s.sample(min(half if gen == "male" else per_group - half, len(s)), random_state=seed)
+                 for gen, s in g.groupby("gender")]
+        return pd.concat(parts)
+
+    out = df.groupby(group_col, group_keys=False).apply(take).reset_index(drop=True)
+    out["image"] = out["image"].map(lambda d: Image.open(io.BytesIO(d["bytes"])).convert("RGB"))
+    out["file"] = [f"fairface_val_{i}" for i in range(len(out))]
+    return out[["file", "image", "age", "gender", "race"]]

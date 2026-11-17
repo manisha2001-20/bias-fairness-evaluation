@@ -12,8 +12,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from bias_eval.datasets.loaders import (DATA_DIR, DatasetError, load_bold, load_fairface, load_prompt_csv,
-                                        load_winogender)
+from bias_eval.datasets.loaders import (DATA_DIR, DatasetError, load_bold, load_fairface, load_fairface_parquet,
+                                        load_prompt_csv, load_winogender)
+from bias_eval.mitigation import MitigatedModel
 from bias_eval.evaluations import coreference, generation, vision
 from bias_eval.metrics.fairness import classification_fairness
 from bias_eval.models.base import ModelError
@@ -131,9 +132,13 @@ elif page == "Gender coreference (Winogender)":
     b.metric("Items", len(items))
     with st.expander("Preview prompts"):
         st.code(coreference.build_prompt(items[0]))
+    mitigate = st.toggle("Apply bias mitigation (fairness instruction)", key="wino_mit",
+                         help="Prepends a fairness instruction to every prompt; compare the score with an unmitigated run.")
     if model and st.button("▶ Run evaluation", type="primary"):
         bar = st.progress(0.0, text="Querying model…")
-        df = run_guard(coreference.run, build(model.key), items, progress=lambda p: bar.progress(p, text=f"Querying model… {p:.0%}"))
+        adapter = MitigatedModel(build(model.key), "coreference") if mitigate else build(model.key)
+        model = adapter.info
+        df = run_guard(coreference.run, adapter, items, progress=lambda p: bar.progress(p, text=f"Querying model… {p:.0%}"))
         if df is not None:
             s = coreference.summarise(df)
             save_run(model, "coreference", s, df, up.name if up else "winogender-style (synthetic sample)")
@@ -186,9 +191,12 @@ elif page == "Generation bias (BOLD)":
     domains = st.multiselect("Domains", sorted(prompts["domain"].unique()), default=sorted(prompts["domain"].unique()))
     prompts = prompts[prompts["domain"].isin(domains)]
     st.caption(f"{len(prompts)} prompts · {prompts['group'].nunique()} groups")
+    mitigate = st.toggle("Apply bias mitigation (fairness instruction)", key="bold_mit")
     if model and st.button("▶ Run evaluation", type="primary"):
         bar = st.progress(0.0, text="Generating…")
-        df = run_guard(generation.run, build(model.key), prompts, progress=lambda p: bar.progress(p, text=f"Generating… {p:.0%}"))
+        adapter = MitigatedModel(build(model.key), "generation") if mitigate else build(model.key)
+        model = adapter.info
+        df = run_guard(generation.run, adapter, prompts, progress=lambda p: bar.progress(p, text=f"Generating… {p:.0%}"))
         if df is not None:
             s = generation.summarise(df)
             save_run(model, "generation", s, df, up.name if up else "bold-style (synthetic sample)")
@@ -220,16 +228,21 @@ elif page == "Generation bias (BOLD)":
 # ================================================================== FairFace
 elif page == "Vision bias (FairFace)":
     st.title("Vision-language model bias")
-    st.caption("FairFace images are not redistributed. Download them (github.com/joojs/fairface), then enter the label CSV and image folder below.")
+    st.caption("FairFace is not redistributed. Download the validation parquet from huggingface.co/datasets/HuggingFaceM4/FairFace "
+               "(or the original images + label CSV from github.com/joojs/fairface) into data/external/fairface/.")
     model = model_picker("Vision model", need_vision=True, key="vis_model")
     a, b = st.columns(2)
-    label_csv = a.text_input("FairFace label CSV", str(DATA_DIR / "external" / "fairface" / "fairface_label_val.csv"))
-    root = b.text_input("Image root folder (contains val/…)", str(DATA_DIR / "external" / "fairface"))
+    default_src = DATA_DIR / "external" / "fairface" / "validation.parquet"
+    label_csv = a.text_input("FairFace parquet or label CSV", str(default_src if default_src.exists() else DATA_DIR / "external" / "fairface" / "fairface_label_val.csv"))
+    root = b.text_input("Image root folder (only for label CSV)", str(DATA_DIR / "external" / "fairface"))
     a, b = st.columns(2)
     group_col = a.selectbox("Compare groups by", ["race", "age"])
     per_group = b.number_input("Images per group", 2, 500, 10)
     if model and st.button("▶ Run evaluation", type="primary"):
-        items = run_guard(load_fairface, label_csv, root, per_group=per_group, group_col=group_col)
+        if label_csv.endswith(".parquet"):
+            items = run_guard(load_fairface_parquet, label_csv, per_group=per_group, group_col=group_col)
+        else:
+            items = run_guard(load_fairface, label_csv, root, per_group=per_group, group_col=group_col)
         if items is not None:
             bar = st.progress(0.0, text="Querying model…")
             df = run_guard(vision.run, build(model.key), items, group_col=group_col, progress=lambda p: bar.progress(p, text=f"Querying model… {p:.0%}"))

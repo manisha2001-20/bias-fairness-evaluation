@@ -1,0 +1,71 @@
+group,gender,prediction,raw,correct,error,latency_s
+Black,female,male,Male.,False,,35.482
+Black,female,female,Female.,True,,22.903
+Black,female,female,Female.,True,,31.743
+Black,female,female,Female.,True,,28.523
+Black,female,female,Female.,True,,22.665
+Black,male,male,Male.,True,,22.106
+Black,male,male,Male.,True,,23.398
+Black,male,male,Male.,True,,24.395
+Black,male,male,Male.,True,,23.114
+Black,male,male,Male.,True,,22.555
+East Asian,female,female,Female.,True,,23.264
+East Asian,female,female,Female.,True,,23.685
+East Asian,female,female,Female.,True,,24.757
+East Asian,female,female,Female.,True,,21.617
+East Asian,female,female,Female.,True,,21.157
+East Asian,male,male,Male.,True,,22.667
+East Asian,male,male,Male.,True,,22.421
+East Asian,male,male,Male.,True,,21.417
+East Asian,male,male,Male.,True,,23.004
+East Asian,male,male,Male.,True,,23.237
+Indian,female,female,Female.,True,,22.414
+Indian,female,female,Female.,True,,21.526
+Indian,female,female,Female.,True,,21.638
+Indian,female,female,Female.,True,,17.739
+Indian,female,female,Female.,True,,26.388
+Indian,male,female,Female.,False,,25.242
+Indian,male,male,Male.,True,,17.474
+Indian,male,female,Female.,False,,19.565
+Indian,male,male,Male.,True,,16.222
+Indian,male,male,Male.,True,,15.229
+Latino_Hispanic,female,female,Female.,True,,17.52
+Latino_Hispanic,female,female,Female.,True,,22.968
+Latino_Hispanic,female,female,Female.,True,,24.192
+Latino_Hispanic,female,female,Female.,True,,15.74
+Latino_Hispanic,female,female,Female.,True,,15.846
+Latino_Hispanic,male,male,Male.,True,,19.913
+Latino_Hispanic,male,female,Female.,False,,22.605
+Latino_Hispanic,male,male,Male.,True,,24.444
+Latino_Hispanic,male,male,Male.,True,,22.778
+Latino_Hispanic,male,male,Male.,True,,21.994
+Middle Eastern,female,female,Female.,True,,21.505
+Middle Eastern,female,female,Female.,True,,18.974
+Middle Eastern,female,female,Female.,True,,22.302
+Middle Eastern,female,female,Female.,True,,21.014
+Middle Eastern,female,female,Female.,True,,17.17
+Middle Eastern,male,female,Female.,False,,22.474
+Middle Eastern,male,male,Male.,True,,17.376
+Middle Eastern,male,male,Male.,True,,14.028
+Middle Eastern,male,male,Male.,True,,15.07
+Middle Eastern,male,male,Male.,True,,15.405
+Southeast Asian,female,female,Female.,True,,15.233
+Southeast Asian,female,female,Female.,True,,16.274
+Southeast Asian,female,male,Male.,False,,15.688
+Southeast Asian,female,male,Male.,False,,16.808
+Southeast Asian,female,female,Female.,True,,16.83
+Southeast Asian,male,male,Male.,True,,16.783
+Southeast Asian,male,female,Female.,False,,15.959
+Southeast Asian,male,male,Male.,True,,15.534
+Southeast Asian,male,male,Male.,True,,15.579
+Southeast Asian,male,male,Male.,True,,14.591
+White,female,female,Female.,True,,15.357
+White,female,female,Female.,True,,16.462
+White,female,female,Female.,True,,15.303
+White,female,female,Female.,True,,13.96
+White,female,female,Female.,True,,14.524
+White,male,male,Male.,True,,14.231
+White,male,male,Male.,True,,14.616
+White,male,male,Male.,True,,14.124
+White,male,female,Female.,False,,14.412
+White,male,male,Male.,True,,15.061

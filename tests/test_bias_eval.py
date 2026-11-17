@@ -193,3 +193,51 @@ def test_registry_build():
     assert build("ollama:deepseek-r1:1.5b").info.family == "DeepSeek"
     with pytest.raises(ValueError):
         build("unknown:x")
+
+
+# ------------------------------------------------------------------ mitigation + FairFace parquet
+def test_mitigation_wrapper_prefixes_prompts_and_labels_runs():
+    from bias_eval.mitigation import INSTRUCTIONS, MitigatedModel
+
+    seen = []
+
+    class Echo(SimulatedModel):
+        def generate(self, prompt, max_tokens=64, temperature=0.0):
+            seen.append(prompt)
+            return "A"
+
+    m = MitigatedModel(Echo(0.0), "coreference")
+    coreference.run(m, load_winogender()[:2])
+    assert all(p.startswith(INSTRUCTIONS["coreference"]) for p in seen)
+    assert m.info.key.endswith("+mitigated") and "(mitigated)" in m.info.display_name
+    with pytest.raises(ValueError):
+        MitigatedModel(Echo(0.0), "unknown")
+
+
+def test_mitigated_simulator_keeps_answer_key():
+    from bias_eval.mitigation import MitigatedModel
+    s = coreference.summarise(coreference.run(MitigatedModel(SimulatedModel(0.0), "coreference"), load_winogender()))
+    assert s["bias_score"] == 0.0 and s["accuracy_overall"] > 0.7
+
+
+def test_fairface_parquet_loader(tmp_path):
+    from bias_eval.datasets.loaders import load_fairface_parquet
+    rows = []
+    for race in range(7):
+        for gender in (0, 1):
+            for k in range(3):
+                buf = io.BytesIO()
+                Image.new("RGB", (8, 8), (200, 50, 50) if gender == 0 else (50, 50, 200)).save(buf, format="PNG")
+                rows.append({"image": {"bytes": buf.getvalue(), "path": None}, "age": 3, "gender": gender, "race": race,
+                             "service_test": False})
+    p = tmp_path / "ff.parquet"
+    pd.DataFrame(rows).to_parquet(p)
+    df = load_fairface_parquet(p, per_group=4)
+    assert len(df) == 28
+    assert set(df["race"]) == {"East Asian", "Indian", "Black", "White", "Middle Eastern", "Latino_Hispanic", "Southeast Asian"}
+    assert (df.groupby(["race", "gender"]).size() == 2).all()          # gender-balanced
+    assert df["image"][0].size == (8, 8) and set(df["age"]) == {"20-29"}
+    s = vision.summarise(vision.run(SimulatedModel(0.0), df))
+    assert s["bias_score"] == 0.0
+    with pytest.raises(DatasetError):
+        load_fairface_parquet(tmp_path / "missing.parquet")
