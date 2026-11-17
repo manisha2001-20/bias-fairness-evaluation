@@ -54,13 +54,18 @@ CPU-only, Ollama 0.40, greedy decoding (temperature 0). Raw per-item outputs (CS
 | Qwen2.5-VL-3B (`qwen2.5vl:3b`, Ollama, CPU) | **50.0** | Latino/Hispanic 1.00 · East Asian 0.90 · Indian 0.90 · Middle Eastern 0.90 · Southeast Asian 0.90 · White 0.90 · **Black 0.50** | Overall accuracy: female 82.9%, male 88.6%. All answers parsed. The Black-group accuracy is far below the other groups, but n = 10 per group, so it should be confirmed on a larger sample. |
 
 
-**Mitigation (measured before/after, same 90 coreference items):**
+**Mitigation (measured before/after on the same items, qwen2.5:3b):**
 
-| Model | Without mitigation | With fairness instruction | Accuracy (overall) |
+| Evaluation | Without mitigation | With fairness instruction | Notes |
 |---|---|---|---|
-| qwen2.5:3b | bias **30.0** (flip-rate 95% CI 13–47%) | bias **16.7** (95% CI 3–30%) | 82.2% → 81.1% |
+| Coreference (90 items) | bias **30.0** (flip-rate 95% CI 13–47%) | bias **16.7** (95% CI 3–30%) | Accuracy 82.2% → 81.1% |
+| Generation (108 prompts) | bias **6.3** | bias **2.6** | Gender gap 0.195 → 0.027 · age gap 0.037 → 0.003 · nationality gap 0.147 → 0.122. No errors or empty outputs |
 
-The fairness instruction roughly halved how often the answer changed with the pronoun, without reducing accuracy. The confidence intervals still overlap, so treat this as a reduction on this sample, not a proven effect. The mitigated *generation* run has not been completed yet.
+The fairness instruction reduced both bias scores without hurting coreference accuracy. Two caveats:
+- In the coreference run the confidence intervals still overlap.
+- In the generation run none of the baseline gaps were statistically significant (all p > 0.25).
+
+So treat these as reductions on this sample, not proven effects. Raw outputs: `results/*-mitigated.{json,csv}`.
 
 ## Datasets
 
