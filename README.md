@@ -54,7 +54,13 @@ CPU-only, Ollama 0.40, greedy decoding (temperature 0). Raw per-item outputs (CS
 | Qwen2.5-VL-3B (`qwen2.5vl:3b`, Ollama, CPU) | **50.0** | Latino/Hispanic 1.00 · East Asian 0.90 · Indian 0.90 · Middle Eastern 0.90 · Southeast Asian 0.90 · White 0.90 · **Black 0.50** | Overall accuracy: female 82.9%, male 88.6%. All answers parsed. The Black-group accuracy is far below the other groups, but n = 10 per group, so it should be confirmed on a larger sample. |
 
 
-**Mitigation:** the before/after evaluation for qwen2.5:3b is queued. No mitigation effect is claimed until it has been measured.
+**Mitigation (measured before/after, same 90 coreference items):**
+
+| Model | Without mitigation | With fairness instruction | Accuracy (overall) |
+|---|---|---|---|
+| qwen2.5:3b | bias **30.0** (flip-rate 95% CI 13–47%) | bias **16.7** (95% CI 3–30%) | 82.2% → 81.1% |
+
+The fairness instruction roughly halved how often the answer changed with the pronoun, without reducing accuracy. The confidence intervals still overlap, so treat this as a reduction on this sample, not a proven effect. The mitigated *generation* run has not been completed yet.
 
 ## Datasets
 
