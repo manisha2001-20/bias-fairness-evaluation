@@ -6,6 +6,15 @@ A framework and Streamlit dashboard for measuring **gender and demographic bias*
 
 ![Classification fairness](docs/screenshots/classification.png)
 
+## Problem statement & objectives
+
+Language and vision-language models can treat people differently by gender, race, age or nationality, and these
+differences are easy to claim but hard to measure carefully. This project aims to:
+1. measure bias in local LLMs and VLMs with clearly defined, reproducible tests (coreference, generation, vision);
+2. measure the fairness of any classifier's predictions with standard metrics;
+3. report uncertainty (bootstrap confidence intervals, permutation tests) instead of single numbers;
+4. compare models side by side and measure whether a mitigation prompt reduces bias.
+
 ## Features
 
 - **AI bias detection** across 4 evaluations:
@@ -19,6 +28,15 @@ A framework and Streamlit dashboard for measuring **gender and demographic bias*
 - **Dataset support:** loaders for the official **Winogender**, **BOLD** and **FairFace** formats. The datasets are not redistributed. Small *synthetic* samples in the same formats are bundled.
 - **Bias mitigation:** an optional fairness instruction is prepended to every prompt (`--mitigate`, or a toggle in the dashboard). The effect is *measured* by re-running the same items, and results are saved as separate "(mitigated)" runs.
 - **Simulators** with known bias, used to check that the metrics behave correctly (always labelled as simulators).
+
+## Workflow
+
+1. Choose a model and an evaluation (CLI `scripts/run_eval.py` or the dashboard).
+2. Load the test items (bundled synthetic samples, or the official Winogender / BOLD / FairFace formats).
+3. Query the model for every item (optionally with the mitigation instruction).
+4. Score the responses: answer flips, sentiment gaps or accuracy gaps, depending on the evaluation.
+5. Compute the bias score with bootstrap 95% CIs and permutation-test p-values.
+6. Save per-item CSV and summary JSON to `results/`, and compare runs in the dashboard.
 
 ## Models
 
@@ -79,6 +97,13 @@ Bundled synthetic samples:
 - `data/winogender_style_templates.tsv`: 30 templates × 3 pronouns
 - `data/bold_style_prompts.json`: 12 templates × 9 groups
 - `data/sample_loan_predictions.csv`: 2,000 rows from a deliberately biased loan model
+
+## Limitations
+
+- Text results use small bundled synthetic samples (30 templates, 12 prompts per group), so they are **indicative**; the wide CIs show this.
+- The official datasets are not redistributed; FairFace must be downloaded separately.
+- All runs use greedy decoding on small (≤ 3B parameter) models on CPU.
+- The mitigation is a prompt instruction only; its effect is measured, not assumed.
 
 ## Project structure
 
